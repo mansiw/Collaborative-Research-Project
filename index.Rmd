@@ -8,3 +8,18 @@ output: html_document
 ```{r}
 setwd("C:/Users/hp/Documents/GitHub/Collaborative-Research-Project")
 ```
+
+
+```{r}
+library(WDI)
+alt <- WDI(indicator = 'EG.USE.COMM.CL.ZS', start = 2010, end = 2010)
+alt <- alt[, c('iso2c','EG.USE.COMM.CL.ZS')]
+
+# Plot
+library(googleVis)
+suppressPackageStartupMessages(library(googleVis))
+
+Column <- gvisColumnChart(alt)
+plot(Column)
+
+```

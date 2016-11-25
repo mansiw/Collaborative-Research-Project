@@ -68,6 +68,33 @@ img {
 
 
 <pre class="r"><code>setwd(&quot;C:/Users/hp/Documents/GitHub/Collaborative-Research-Project&quot;)</code></pre>
+<pre class="r"><code>library(WDI)</code></pre>
+<pre><code>## Loading required package: RJSONIO</code></pre>
+<pre class="r"><code>alt &lt;- WDI(indicator = 'EG.USE.COMM.CL.ZS', start = 2010, end = 2010)
+alt &lt;- alt[, c('iso2c','EG.USE.COMM.CL.ZS')]
+
+# Plot
+library(googleVis)</code></pre>
+<pre><code>## 
+## Welcome to googleVis version 0.5.10
+## 
+## Please read the Google API Terms of Use
+## before you start using the package:
+## https://developers.google.com/terms/
+## 
+## Note, the plot method of googleVis will by default use
+## the standard browser to display its output.
+## 
+## See the googleVis package vignettes for more details,
+## or visit http://github.com/mages/googleVis.
+## 
+## To suppress this message use:
+## suppressPackageStartupMessages(library(googleVis))</code></pre>
+<pre class="r"><code>suppressPackageStartupMessages(library(googleVis))
+
+Column &lt;- gvisColumnChart(alt)
+plot(Column)</code></pre>
+<pre><code>## starting httpd help server ... done</code></pre>
 
 
 </div>
