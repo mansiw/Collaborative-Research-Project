@@ -27,6 +27,9 @@ runtime: shiny
 ## Inferential Statistics II
 
 - Attempt at regressing given political engagement variable on response to whether or not youth unemployed in last XX months
+- Variables to look at:
+  - Polintr
+  - Pbldmn
 
 ## Avenues for further research
 
