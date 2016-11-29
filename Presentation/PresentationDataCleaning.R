@@ -63,20 +63,19 @@ eu <- eu[-temp2, ]
 
 ## Removing unwanted columns from ESS data ##
 
-ESSVariables <-c("cntry", "essround", "polintr","trstprl", "trstplt","trstep","vote","contplt","wrkprty","wrkorg","badge","sgnptit","pbldmn","bctprd","clsprty","mmbprty","edulvla","uempla", "uempli","dsbld", "mbtru","mainact","wrkctra","gndr","stfdem","pdjobev")
+ESSVariables <-c("cntry", "essround", "polintr","trstprl", "trstplt","trstep","vote","contplt","wrkprty","wrkorg","badge","sgnptit","pbldmn","bctprd","clsprty","mmbprty","edulvla","uempla", "uempli","dsbld", "mbtru","mainact","wrkctra","gndr","stfdem","pdjobev","eisced")
 
 ESSData <- df[ESSVariables]
 
 table(ESSData$cntry)
 
-
 ## Condensing ESS Data ##
 
 table(ESSData$polintr) # want to drop any response greater than 4
 
-ESSData <- subset(ESSData, ESSData$polintr <= 4 & ESSData$trstprl <=10 & ESSData$trstplt <=10 & ESSData$trstep <=10 & ESSData$vote <=3 & ESSData$contplt <=2 & ESSData$wrkprty <= 2 & ESSData$badge <=2 & ESSData$sgnptit <= 2 & ESSData$pbldmn <= 2 & ESSData$bctprd <= 2 & ESSData$clsprty <=2 & ESSData$edulvla > 0 & ESSData$edulvla < 55 & ESSData$mbtru <= 3 & ESSData$pdjobev <= 2 & ESSData$gndr <= 2 )
+#ESSData <- subset(ESSData, ESSData$polintr <= 4 & ESSData$trstprl <=10 & ESSData$trstplt <=10 & ESSData$trstep <=10 & ESSData$vote <=3 & ESSData$contplt <=2 & ESSData$wrkprty <= 2 & ESSData$badge <=2 & ESSData$sgnptit <= 2 & ESSData$pbldmn <= 2 & ESSData$bctprd <= 2 & ESSData$clsprty <=2 & ESSData$edulvla > 0 & ESSData$edulvla < 55 & ESSData$mbtru <= 3 & ESSData$pdjobev <= 2 & ESSData$gndr <= 2 )
 
-table(ESSData$polintr)
+#table(ESSData$polintr)
 
 ESSData$polintr[ESSData$polintr > 4] <- NA
 ESSData$trstprl[ESSData$trstprl > 10] <- NA
@@ -90,15 +89,20 @@ ESSData$sgnptit[ESSData$sgnptit > 2] <- NA
 ESSData$pbldmn[ESSData$pbldmn > 2] <- NA
 ESSData$bctprd[ESSData$bctprd > 2] <- NA
 ESSData$clsprty[ESSData$clsprty > 2] <- NA
-ESSData$edulvla[ESSData$edulvla == 0] <- NA
-ESSData$edulvla[ESSData$edulvla >= 55] <- NA
+ESSData$eisced[ESSData$eisced == 0] <- NA
+ESSData$eisced[ESSData$eisced >50] <- NA
 ESSData$mbtru[ESSData$mbtru > 3] <- NA
 ESSData$pdjobev[ESSData$pdjobev > 2] <- NA
 ESSData$gndr[ESSData$gndr > 2] <- NA
 
-
 table(ESSData$edulvla)
 
+## Make gndr a dummy ##
+
+ESSData$gndr[ESSData$gndr == 1] <- 0
+ESSData$gndr[ESSData$gndr == 2] <- 1
+
+table(ESSData$gndr)
 
 ## Add year value for ESS Rounds ##
 
@@ -133,28 +137,16 @@ table(ESSData$unempdummy) # to verify only 0 or 1 in that variable
 
 GroupedESS <- group_by(ESSData, cntry, TIME) # Group the ESS Data by country and year
 
-MeansESS <- summarize(GroupedESS, avgpolintr = mean(polintr), avgtrstprl = mean(trstprl), avgtrstplt = mean(trstplt), avgtrstep = mean(trstep), avgvote = mean(vote), avgcontplt = mean(contplt), avgwrkprty = mean(wrkprty), avgwrkorg = mean(wrkorg), avgbadge=mean(badge), avgsgnptit = mean(sgnptit), avgpbldmn = mean(pbldmn), avgbctprd = mean(bctprd), avgclsprty = mean(clsprty), avgmmbprty = mean(mmbprty), avgedulvla = mean(edulvla), avguempla = mean(uempla), avguempli = mean(uempli), avgdsbld = mean(dsbld), avgmbtru = mean(mbtru)) 
+MeansESS <- summarize(GroupedESS, avgpolintr = mean(polintr, na.rm=T), avgtrstprl = mean(trstprl, na.rm=T), avgtrstplt = mean(trstplt, na.rm=T), avgtrstep = mean(trstep, na.rm=T), avgvote = mean(vote, na.rm=T), avgcontplt = mean(contplt, na.rm=T), avgwrkprty = mean(wrkprty, na.rm=T), avgwrkorg = mean(wrkorg, na.rm=T), avgbadge=mean(badge, na.rm=T), avgsgnptit = mean(sgnptit, na.rm=T), avgpbldmn = mean(pbldmn, na.rm=T), avgbctprd = mean(bctprd, na.rm=T), avgclsprty = mean(clsprty, na.rm=T), avgmmbprty = mean(mmbprty, na.rm=T), avgedulvla = mean(edulvla, na.rm=T), avguempla = mean(uempla, na.rm=T), avguempli = mean(uempli, na.rm=T), avgdsbld = mean(dsbld, na.rm=T), avgmbtru = mean(mbtru, na.rm=T)) 
 # create variables containing the means for each country and year
 
 #### Merge Datasets ####
 
 YouthData <- merge(MeansESS, eu, by = c("cntry", "TIME"), all = T)
 
-write.csv(YouthData, file = "YouthData.csv")
+#write.csv(YouthData, file = "YouthData.csv")
 
 YouthData$Value <- as.numeric(as.character(YouthData$Value)) # Ensure all the unemployment value are numerics 
-
-testvect <- c()
-
-testvect <- names(d[1:125])
-
-class(testvect)
-
-is.atomic(testvect)
-is.vector(testvect)
-
-#dtest <- d[!eg2011$ID %in% bg2011missingFromBeg, ]
-
 
 #### Building a Model ####
 
@@ -203,3 +195,8 @@ summary(m5)
 m6 <- lm(pbldmn ~ unempdummy, data = ESSData)
 
 summary(m6)
+
+
+#m7 <- plm(polintr ~ unempdummy, data = ESSData, model = "within", index = c("cntry", "TIME"))
+
+#summary(m7)

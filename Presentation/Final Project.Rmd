@@ -55,14 +55,14 @@ We used two main datasets for our research:
   - Vote
 
 Control Variabls:
-  - edulvla
+  - eisced
   - pdjobev
   - Countries
   - mbtru
   - gndr
   - stfdem
 
-## Inferential Statistics III: Political Interest ## 
+## Inferential Statistics III: Political Interest ##  {.smaller}
 ```{r, echo=F, results = 'asis'}
 ## Models for Unemployment ##
 
@@ -70,11 +70,12 @@ Control Variabls:
 
 # Political Interest 
 
-#m2.1 <- lm(polintr ~ unempdummy, data = ESSData)
+m2.1a <- lm(polintr ~ unempdummy, data = ESSData)
 
-#summary(m2.1)
+m2.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1, data = ESSData)
 
-#stargazer::stargazer(m2.1, type = "html")
+
+stargazer::stargazer(m2.1a, m2.1b, type = "html")
 
 
 ```  
@@ -85,9 +86,9 @@ Control Variabls:
 
 # Public Demonstration
 
-#m2.2 <- lm(pbldmn ~ unempdummy, data = ESSData)
+m2.2 <- lm(pbldmn ~ unempdummy, data = ESSData)
 
-#stargazer::stargazer(m2.2, type = "html")
+stargazer::stargazer(m2.2, type = "html")
 
 
 ```
