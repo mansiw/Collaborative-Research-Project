@@ -7,12 +7,34 @@ output: ioslides_presentation
 runtime: shiny
 ---
 
+```{r, warnings=F, message=F, echo=F, include=FALSE}
+
+source("PresentationDataCleaning.R")
+
+```
+
 ## Research Question
+
+- How does youth unemployment affect youth political engagement within European countries?
+  
+- Does it inspire **apathy** or **action**?
+
 
 ## Data Sources
 
-- ESS Data
-- Eurostat Data
+We used two main datasets for our research:
+
+**The European Social Survey**
+
+- Representative survey of EU residents conducted every two years (last round of data available is from 2014)
+
+- Respondents are asked about their opinions and attitudes on a variety of political and social topics
+
+- Subsetted data to only look at youths 18 - 25
+
+**Eurostat Data**
+
+- Used their data on yearly youth unemployment rates in various countries 
 
 ## Descriptive Statistics
 
@@ -30,6 +52,45 @@ runtime: shiny
 - Variables to look at:
   - Polintr
   - Pbldmn
+  - Vote
+
+Control Variabls:
+  - edulvla
+  - pdjobev
+  - Countries
+  - mbtru
+  - gndr
+  - stfdem
+
+## Inferential Statistics III: Political Interest ## 
+```{r, echo=F, results = 'asis'}
+## Models for Unemployment ##
+
+# maybe helpful for font sizes: http://www.itgo.me/a/4995744297035700956/resize-stargarzer-table-when-type-html-for-ioslides-in-rstudio
+
+# Political Interest 
+
+#m2.1 <- lm(polintr ~ unempdummy, data = ESSData)
+
+#summary(m2.1)
+
+#stargazer::stargazer(m2.1, type = "html")
+
+
+```  
+
+## Inferential Statistics III: Participation in Public Demonstrations ## 
+
+```{r, echo=F, results = 'asis'}
+
+# Public Demonstration
+
+#m2.2 <- lm(pbldmn ~ unempdummy, data = ESSData)
+
+#stargazer::stargazer(m2.2, type = "html")
+
+
+```
 
 ## Avenues for further research
 
