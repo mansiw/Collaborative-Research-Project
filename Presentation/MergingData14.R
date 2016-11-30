@@ -1,10 +1,3 @@
----
-title: "Untitled"
-author: "Mansi"
-date: "Saturday, November 19, 2016"
-output: pdf_document
----
-
 ## Reading 2014 dataset into an object
 x <- read.csv("Datasets/ESS7e02.csv")
 
@@ -49,8 +42,14 @@ table(x2$polintr)
 x2$polintr <- as.numeric(as.factor(x2$polintr)) 
 table(x2$polintr) ## This has the numbers representing categories now
 
+table(x2$vote)
 x2$vote <- as.integer(as.factor(x2$vote))
+table(x2$vote)
+
+table(x2$contplt)
 x2$contplt <- as.integer(as.factor(x2$contplt))
+
+
 x2$wrkprty <- as.integer(as.factor(x2$wrkprty))
 x2$wrkorg <- as.integer(as.factor(x2$wrkorg))
 x2$badge <- as.integer(as.factor(x2$badge))
@@ -79,9 +78,6 @@ x2$trstplt <- as.integer(x2$trstplt)
 levels(x2$trstep) <- c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "77", "88", "99")
 x2$trstep <- as.integer(x2$trstep)
 
-levels(x2$eisced) <- c("0", "1", "2", "3", "4", "5", "6", "7", "55", "77", "88", "99")
-x2$eisced <- as.integer(x2$eisced)
-
 levels(x2$gndr) <- c("1", "2", "9")
 x2$gndr <- as.integer(x2$gndr)
 
@@ -101,6 +97,14 @@ x2$trstprl <- as.integer(x2$trstprl)
 x2$trstplt <- as.integer(x2$trstplt)
 x2$trstep <- as.integer(x2$trstep)
 
+levels(x2$eisced) <- c("0", "1", "2", "3", "4", "5", "6", "7", "55", "77", "88", "99")
+ESSData$eisced <- as.factor(ESSData$eisced)
+
+levels(x2$gndr) <- c("1", "2", "9")
+x2$gndr <- as.factor(x2$gndr)
+
+
+
 ## As there are only 25 variables common between these two, those are the ones we can need to merge the data. The one variable that exists in only until 2012 cannot be included in the command below otherwise it doesn't work
 
-combined <- merge(ESSData, x2, by = c("cntry", "essround", "polintr","trstprl", "trstplt","trstep","vote","contplt","wrkprty","wrkorg","badge","sgnptit","pbldmn", "bctprd","clsprty","eisced","uempla", "uempli","dsbld", "mbtru","mainact","wrkctra","gndr","stfdem","pdjobev"), all = T)
+ESSCombined <- merge(ESSData, x2, by = c("cntry", "essround", "polintr","trstprl", "trstplt","trstep","vote","contplt","wrkprty","wrkorg","badge","sgnptit","pbldmn", "bctprd","clsprty","eisced","uempla", "uempli","dsbld", "mbtru","mainact","wrkctra","gndr","stfdem","pdjobev"), all = T)
