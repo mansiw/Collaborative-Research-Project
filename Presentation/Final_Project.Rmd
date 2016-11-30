@@ -72,7 +72,7 @@ Control Variabls:
 
 m2.1a <- lm(polintr ~ unempdummy, data = ESSData)
 
-m2.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U.")
+m2.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA")
 
 m2.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1, data = ESSData)
 

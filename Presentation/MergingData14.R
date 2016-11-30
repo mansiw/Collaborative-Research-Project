@@ -1,5 +1,5 @@
 ## Reading 2014 dataset into an object
-x <- read.csv("Datasets/ESS7e02.csv")
+x <- read.dta("Datasets/ESS7e02.dta")
 
 ## Subsetting x to keep only the youth
 x$agea <- as.numeric(x$agea)
@@ -9,6 +9,8 @@ x <- subset(x, x$agea <= 25 & x$agea >= 18)
 ## Capturing the variable names of d into a vector and subsetting
 df_vars <- c()
 df_vars <- names(ESSData[1:27])
+
+write.csv(x, "ESS7e02_revised.csv")
 
 x_vars <- names(x)
 
@@ -48,6 +50,7 @@ table(x2$vote)
 
 table(x2$contplt)
 x2$contplt <- as.integer(as.factor(x2$contplt))
+table(x2$contplt)
 
 
 x2$wrkprty <- as.integer(as.factor(x2$wrkprty))
@@ -69,11 +72,12 @@ x2$wrkctra <- as.integer(as.factor(x2$wrkctra))
 table(x2$trstprl) ## shows that we need to code this manually
 levels(x2$trstprl) <- c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "77", "88", "99")
 table(x2$trstprl) ## shows the levels as we need them
-x2$trstprl <- as.integer(x2$trstprl)
 
 
 levels(x2$trstplt) <- c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "77", "88", "99")
 x2$trstplt <- as.integer(x2$trstplt)
+table(x2$trstplt) ## shows the levels as we need them
+
 
 levels(x2$trstep) <- c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "77", "88", "99")
 x2$trstep <- as.integer(x2$trstep)
