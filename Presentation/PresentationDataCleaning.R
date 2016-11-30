@@ -9,6 +9,8 @@ library(arm)  # for the sim() function to simulate model estimates
 library(interplot)  # for plotting interactions
 library(dplyr)  # for data manipulation
 library(plm)
+library(foreign)
+
 ## Loading the Data ##
 
 setwd('/Users/toridykes1/GitHub/Collaborative-Research-Project/Presentation')
@@ -69,6 +71,14 @@ ESSData <- df[ESSVariables]
 
 table(ESSData$cntry)
 
+## Merging File ##
+
+# Here we merge the existing ESSData file with a file for Round 7 data (2014)
+
+source("Merging_data14.rmd")
+
+
+
 ## Condensing ESS Data ##
 
 table(ESSData$polintr) # want to drop any response greater than 4
@@ -125,8 +135,6 @@ eu$cntry <- countrycode(eu$GEO, "country.name", "iso2c")
 # If uempla or uempli = 1, then code as 1, else 0
 
 ESSData$unempdummy <- 0
-
-# ESSData$unempdummy <- ESSData$uempla + ESSData$uempli
 
 ESSData$unempdummy <- ifelse(ESSData$uempla ==1 | ESSData$uempli ==1, 1, 0)
 # if answer to either of the unemployment variables is 1, code as 1

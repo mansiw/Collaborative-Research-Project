@@ -5,18 +5,6 @@ date: "Saturday, November 19, 2016"
 output: pdf_document
 ---
 
-## Libraries ##
-
-
-library(stargazer)  # for summary statistics and regression tables
-library(magrittr)  # for 'piping': more readable code
-library(ggplot2)  # the ggplot2 package provides nice function for plotting
-library(arm)  # for the sim() function to simulate model estimates
-library(interplot)  # for plotting interactions
-library(dplyr)  # for data manipulation
-
-library(foreign)
-
 ## Reading 2014 dataset into an object
 x <- read.dta("C:/Users/hp/Downloads/ESS7e02.dta")
 
