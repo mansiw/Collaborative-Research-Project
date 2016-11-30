@@ -71,51 +71,32 @@ ESSData <- df[ESSVariables]
 
 table(ESSData$cntry)
 
-## Merging File ##
-
-# Here we merge the existing ESSData file with a file for Round 7 data (2014)
-
-source("MergingData14.r")
-
 ## Condensing ESS Data ##
 
-table(ESSCombined$polintr) # want to drop any response greater than 4
+table(ESSData$polintr) # want to drop any response greater than 4
 
 #ESSData <- subset(ESSData, ESSData$polintr <= 4 & ESSData$trstprl <=10 & ESSData$trstplt <=10 & ESSData$trstep <=10 & ESSData$vote <=3 & ESSData$contplt <=2 & ESSData$wrkprty <= 2 & ESSData$badge <=2 & ESSData$sgnptit <= 2 & ESSData$pbldmn <= 2 & ESSData$bctprd <= 2 & ESSData$clsprty <=2 & ESSData$edulvla > 0 & ESSData$edulvla < 55 & ESSData$mbtru <= 3 & ESSData$pdjobev <= 2 & ESSData$gndr <= 2 )
 
 #table(ESSData$polintr)
 
-ESSCombined$polintr[ESSCombined$polintr > 4] <- NA
-ESSCombined$trstprl[ESSCombined$trstprl > 10] <- NA
-ESSCombined$trstplt[ESSCombined$trstplt > 10] <- NA
-ESSCombined$trstep[ESSCombined$trstep > 10] <- NA
-ESSCombined$vote[ESSCombined$vote > 2] <- NA
-ESSCombined$contplt[ESSCombined$contplt > 2] <- NA
-ESSCombined$wrkprty[ESSCombined$wrkprty > 2] <- NA
-ESSCombined$badge[ESSCombined$badge > 2] <- NA
-ESSCombined$sgnptit[ESSCombined$sgnptit > 2] <- NA
-ESSCombined$pbldmn[ESSCombined$pbldmn > 2] <- NA
-ESSCombined$bctprd[ESSCombined$bctprd > 2] <- NA
-ESSCombined$clsprty[ESSCombined$clsprty > 2] <- NA
-ESSCombined$mbtru[ESSCombined$mbtru > 3] <- NA
-ESSCombined$pdjobev[ESSCombined$pdjobev > 2] <- NA
-ESSCombined$gndr[ESSCombined$gndr > 2] <- NA
+ESSData$polintr[ESSData$polintr > 4] <- NA
+ESSData$trstprl[ESSData$trstprl > 10] <- NA
+ESSData$trstplt[ESSData$trstplt > 10] <- NA
+ESSData$trstep[ESSData$trstep > 10] <- NA
+ESSData$vote[ESSData$vote > 2] <- NA
+ESSData$contplt[ESSData$contplt > 2] <- NA
+ESSData$wrkprty[ESSData$wrkprty > 2] <- NA
+ESSData$badge[ESSData$badge > 2] <- NA
+ESSData$sgnptit[ESSData$sgnptit > 2] <- NA
+ESSData$pbldmn[ESSData$pbldmn > 2] <- NA
+ESSData$bctprd[ESSData$bctprd > 2] <- NA
+ESSData$clsprty[ESSData$clsprty > 2] <- NA
+ESSData$mbtru[ESSData$mbtru > 3] <- NA
+ESSData$pdjobev[ESSData$pdjobev > 2] <- NA
+ESSData$gndr[ESSData$gndr > 2] <- NA
+ESSData$eisced[ESSData$eisced == 0] <- NA
+ESSData$eisced[ESSData$eisced >= 55] <- NA
 
-# need to do eisced somewhat differently because it is a factor
-
-ESSCombined$eisced[ESSCombined$eisced == 0] <- NA
-ESSCombined$eisced[ESSCombined$eisced == 55] <- NA
-ESSCombined$eisced[ESSCombined$eisced == 77] <- NA
-ESSCombined$eisced[ESSCombined$eisced == 88] <- NA
-ESSCombined$eisced[ESSCombined$eisced == 99] <- NA
-
-ESSCombined$eisced <- droplevels(ESSCombined$eisced, exclude = if(anyNA(levels(ESSCombined$eisced))) NULL else NA)
-# need to drop the levels with no observations
-
-table(ESSCombined$eisced)
-table(ESSCombined$gndr)
-
-class(ESSCombined$eisced)
 
 ## Make gndr a dummy ##
 
