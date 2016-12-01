@@ -40,8 +40,29 @@ We used two main datasets for our research:
 
 ## Descriptive Statistics
 
-- Show some ranges of values across countries
-- Nice ggplot graphs here
+Comparing unemployment levels in 2008 and 2010
+
+```{r}
+Unemp0810 <- subset(YouthData, YouthData$TIME==2008 | YouthData$TIME==2010)
+
+Unemp0810$TIME <- factor(Unemp0810$TIME) # Ensure year is treated as levels, not as continuous numbers
+
+Unemp0810 <- group_by(Unemp0810, cntry, TIME)
+
+
+Unemp0810$Value <- as.numeric(as.character(Unemp0810$Value)) # Ensure all the unemployment value are numerics 
+
+ggplot(data=Unemp0810, aes(x=cntry, y=Value, fill=TIME)) + geom_bar(stat="identity", position=position_dodge()) + labs(x="Country", y="Unemployment Rate (% of active population)") + ggtitle("Youth Unemployment Rates in Europe, 2008 - 2010")
+
+```
+
+## Trends in Political Interest across countries 
+
+```{r}
+compare <- subset(YouthData, YouthData$cntry == "DE"|YouthData$cntry == "DK"|YouthData$cntry == "ES"|YouthData$cntry == "FR"|YouthData$cntry == "HU"|YouthData$cntry == "IE"|YouthData$cntry == "NL")
+
+ggplot(data = compare, aes(x=TIME, y=avgpolintr)) + geom_line(aes(colour=cntry)) + scale_x_continuous(name="Years", breaks = c(2002, 2004, 2006, 2008, 2010, 2012),labels=c("2002","2004","2006","2008","2010","2012"), limits = c(2002,2012))
+```
 
 ## Inferential Statistics I {.smaller .build}
 
