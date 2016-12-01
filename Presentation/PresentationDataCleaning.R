@@ -146,6 +146,14 @@ ESSData$votedummy <- ifelse(ESSData$vote == 1, 1, 0)
 
 table(ESSData$votedummy) # to verify only 0 or 1 in that variable
 
+# Create dummy for union membership 
+
+## Regression with a dummy for trade union association
+
+ESSData$uniondummy <- 0
+
+ESSData$uniondummy <- ifelse(ESSData$mbtru == 1| ESSData$mbtru == 2, 1, 0)
+
 ## Group Data ##
 
 GroupedESS <- group_by(ESSData, cntry, TIME) # Group the ESS Data by country and year

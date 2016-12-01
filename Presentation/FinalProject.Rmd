@@ -20,6 +20,7 @@ source("PresentationDataCleaning.R")
   
 - Does it inspire <b>apathy</b> or <b>action</b>?
 
+<b>Hypothesis:</b> Higher youth unemployment will lead to greater levels of interest and engagement in politics. 
 
 ## Data Sources
 
@@ -38,9 +39,7 @@ We used two main datasets for our research:
 - Used their data on yearly youth unemployment rates in various European countries 
 
 
-## Descriptive Statistics
-
-Comparing unemployment levels in 2008 and 2010
+## Overview: Unemployment Levels 2008 & 2010
 
 ```{r, echo = F}
 Unemp0810 <- subset(YouthData, YouthData$TIME==2008 | YouthData$TIME==2010)
@@ -62,6 +61,21 @@ ggplot(data=Unemp0810, aes(x=cntry, y=Value, fill=TIME)) + geom_bar(stat="identi
 compare <- subset(YouthData, YouthData$cntry == "DE"|YouthData$cntry == "DK"|YouthData$cntry == "ES"|YouthData$cntry == "FR"|YouthData$cntry == "HU"|YouthData$cntry == "IE"|YouthData$cntry == "NL")
 
 ggplot(data = compare, aes(x=TIME, y=avgpolintr)) + geom_line(aes(colour=cntry)) + scale_x_continuous(name="Years", breaks = c(2002, 2004, 2006, 2008, 2010, 2012),labels=c("2002","2004","2006","2008","2010","2012"), limits = c(2002,2012))
+```
+
+## Trends in Political Interest Across Education Levels ##
+
+```{r, echo = F}
+
+library(sjPlot)
+
+sjp.setTheme(title.align = "center", title.size = 1.5)
+sjp.grpfrq(ESSData$eisced, ESSData$polintr, show.prc = F, show.n = F, 
+           axis.titles = c("Education Levels","Frequency"), 
+           axis.labels = c("Less than Secondary","Lower \nSecondary","Lower Tier Upper \nSecondary",
+                           "Upper Tier Upper \nSecondary","Advanced Vocational","BA","MA"),
+           title = c("Distribution of Political Interest by Educational Level"))
+
 ```
 
 ## Inferential Statistics I: Initial Attempt ## {.smaller .build}
@@ -88,7 +102,7 @@ stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
 
 </div>
 
-## Inferential Statistics II: ESS Data Alone
+## Inferential Statistics II: Individual-Level Analysis {.smaller}
 
 - Decided to look at individual-level ESS data instead for additional insight
 
@@ -126,50 +140,24 @@ stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
 
 m3.1a <- lm(polintr ~ unempdummy, data = ESSData)
 
-m3.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1, data = ESSData)
-
-## Regression with a dummy for trade union association
-
-ESSData$uniondummy <- 0
-table(ESSData$mbtru)
-                                                                                                        
-ESSData$uniondummy <- ifelse(ESSData$mbtru == 1| ESSData$mbtru == 2, 1, 0)
+m3.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1 + uniondummy, data = ESSData)
 
 m3.1c <- lm(polintr ~ unempdummy + gndr + eisced + uniondummy, data = ESSData)
-summary(m3.1c)
 
-
-m3.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA","Curr. Memb. of Trade Union","Prev. Memb. of Trade Union","Not Memb. of Trade Union")
+m3.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA")
 
 stargazer::stargazer(m3.1a, m3.1b, m3.1c, covariate.labels = m3.1blabels, type = "html")
 
 
 ```  
 
-## Inferential Statistics III: Political Interest ##
-
-```{r, echo = F}
-
-library(sjPlot)
-
-sjp.setTheme(title.align = "center", title.size = 1.5)
-sjp.grpfrq(ESSData$eisced, ESSData$polintr, show.prc = F, show.n = F, 
-           axis.titles = c("Education Levels","Frequency"), 
-           axis.labels = c("Less than Secondary","Lower \nSecondary","Lower Tier Upper \nSecondary",
-                           "Upper Tier Upper \nSecondary","Advanced Vocational","BA","MA"),
-           title = c("Distribution of Political Interest by Educational Level"))
-
-```
-
-
-
-## Inferential Statistics III: Political Interest ##  {.reduced}
+## Inferential Statistics III: Political Interest ##  {.morereduced}
 
 <div class="columns-2">
 
 ```{r, echo=F, results='asis'}
 
-m3.1c <- lm(lm(polintr ~ unempdummy + gndr + factor(cntry) - 1, data = ESSData))
+m3.1c <- lm(polintr ~ unempdummy + gndr + eisced + uniondummy + factor(cntry) - 1, data = ESSData)
 
 stargazer(m3.1c, type = "html", digits = 2)
 
@@ -180,15 +168,13 @@ stargazer(m3.1c, type = "html", digits = 2)
 </div>
 
 
-## Inferential Statistics III: Political Interest ##
+## Inferential Statistics III: Political Interest ## {.smaller}
 
 ```{r, echo = F}
 
-m3.1c <- lm(lm(polintr ~ unempdummy + gndr + factor(cntry) - 1, data = ESSData))
-
 m3.1cframe <- data.frame(Variable = rownames(summary(m3.1c)$coef), Coefficient = summary(m3.1c)$coef[,1], SE = summary(m3.1c)$coef[,2], modelName = "Country Model")
 
-m3.1cframe <- m3.1cframe[-c(1,2),]
+m3.1cframe <- m3.1cframe[-c(1,2,3,4),]
 
 m3.1cframe$Variable <- c("BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GB","GR","HU","IE","IT","NL","NO","PL","PT","SE","SI","SK")
 
@@ -212,11 +198,31 @@ zp1 <- zp1 + ggtitle("Comparing Various Country Coefficients") +
         axis.text.x = element_text(face = "bold"), 
         axis.title.y = element_text(face = "bold")) + 
   labs(x = "Countries") 
-print(zp1)  # The trick to these is position_dodge().
+print(zp1)  # The trick to these is position_dodge()
+
+
+
+# Notes:
+
+# Italy - only 2002, 2004 and 2012
 
 ```
-Remember, a lower number (i.e., closer to 1) equates to a higher political interest. 
 
+<div class="centered">
+Remember, a lower number (i.e., closer to 1) equates to a higher political interest. 
+</div>
+
+
+## Concluding Thoughts ## 
+
+- An unemployed young person will have a lower political interest than an employed young person
+
+- At higher levels of education, individuals indicate higher political interest
+
+- A person's country of residence also clearly affects their level of political interest
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This conditions the effect of unemployment on political 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interest
 
 ## Where to from here? ## {.build}
 
