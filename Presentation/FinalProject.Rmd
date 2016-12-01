@@ -2,8 +2,10 @@
 ---
 title: "The Effect of Youth Unemployment on Youth Political Engagement"
 author: "Tori Dykes & Mansi Wadhwa"
-date: "11/28/2016"
+date: "12/2/2016"
 output: ioslides_presentation
+css: styles.css
+
 ---
 
 ```{r, warnings=F, message=F, echo=F, include=FALSE}
@@ -41,26 +43,55 @@ We used two main datasets for our research:
 - Show some ranges of values across countries
 - Nice ggplot graphs here
 
-## Inferential Statistics I
+## Inferential Statistics I {.smaller .build}
 
-- Attempt at regressing change in a given political engagement variable on change in unemployment
-- Explain lack of significance
+- Original intent was to regress the change in a given political variable on the change in unemployment
+
+- Became clear we simply didn't have the right data / enough data to do this meaningfully
+
+<div class="columns-2">
+
+```{r, echo = F, results='asis'}
+
+m1.1 <- lm(deltaavgpolintr ~ deltavalue, data = YouthData)
+
+m1.1labels <- c("Delta Unemployment")
+stargazer::stargazer(m1.1, covariate.labels = m1.1labels, type = "html")
+
+m1.2 <- lm(deltaavgvote ~ deltavalue, data = YouthData)
+
+stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
+
+
+```
+
+</div>
 
 ## Inferential Statistics II
 
-- Attempt at regressing given political engagement variable on response to whether or not youth unemployed in last XX months
-- Variables to look at:
-  - Polintr
-  - Pbldmn
-  - Vote
+- Since we have access to a host of individual-level data in the ESS survey, including unemployment, decided to look here instead
 
-Control Variabls:
-  - eisced
-  - pdjobev
-  - Countries
-  - mbtru
-  - gndr
-  - stfdem
+- Consider three political participation variables:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Level of political interest
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Participation in public demonstrations
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Voting
+
+```{r, echo=F}
+# should voting be a logit instead?? same with pbldmn
+
+
+#Control Variables:
+# - eisced
+# - pdjobev
+# - Countries
+# - mbtru
+# - gndr
+# - stfdem
+
+```
 
 ## Inferential Statistics III: Political Interest ##  {.smaller}
 ```{r, echo=F, results = 'asis'}
@@ -70,18 +101,36 @@ Control Variabls:
 
 # Political Interest 
 
-m2.1a <- lm(polintr ~ unempdummy, data = ESSData)
+m3.1a <- lm(polintr ~ unempdummy, data = ESSData)
 
-m2.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA")
+m3.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1, data = ESSData)
 
-m2.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1, data = ESSData)
+m3.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA")
 
-stargazer::stargazer(m2.1a, m2.1b, covariate.labels = m2.1blabels, type = "html")
+stargazer::stargazer(m3.1a, m3.1b, covariate.labels = m3.1blabels, type = "html")
 
 
 ```  
 
+## Inferential Statistics III: Political Interest ##  {.reduced}
+
+<div class="columns-2">
+
+```{r, echo=F, results='asis'}
+
+m3.1c <- lm(lm(polintr ~ unempdummy + gndr + factor(cntry) - 1, data = ESSData))
+
+stargazer(m3.1c, type = "html", digits = 2)
+
+#stargazer::stargazer(m3.1c, type = "html")
+
+
+```
+</div>
+
+
 ## Inferential Statistics III: Participation in Public Demonstrations ## 
+
 
 ```{r, echo=F, results = 'asis'}
 
@@ -89,10 +138,11 @@ stargazer::stargazer(m2.1a, m2.1b, covariate.labels = m2.1blabels, type = "html"
 
 m2.2 <- lm(pbldmn ~ unempdummy, data = ESSData)
 
-stargazer::stargazer(m2.2, type = "html")
+stargazer::stargazer(m2.2, type = "html", font.size = "tiny")
 
 
 ```
+
 
 ## Avenues for further research
 
