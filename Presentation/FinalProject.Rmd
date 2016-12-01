@@ -18,14 +18,14 @@ source("PresentationDataCleaning.R")
 
 - How does youth unemployment affect youth political engagement within European countries?
   
-- Does it inspire **apathy** or **action**?
+- Does it inspire <b>apathy</b> or <b>action</b>?
 
 
 ## Data Sources
 
 We used two main datasets for our research:
 
-**The European Social Survey**
+<b>The European Social Survey</b>
 
 - Representative survey of EU residents conducted every two years (we used data from 2002 - 2012)
 
@@ -33,7 +33,7 @@ We used two main datasets for our research:
 
 - Subsetted data to only look at youths 18 - 25
 
-**Eurostat Data**
+<b>Eurostat Data</b>
 
 - Used their data on yearly youth unemployment rates in various European countries 
 
@@ -42,7 +42,7 @@ We used two main datasets for our research:
 
 Comparing unemployment levels in 2008 and 2010
 
-```{r}
+```{r, echo = F}
 Unemp0810 <- subset(YouthData, YouthData$TIME==2008 | YouthData$TIME==2010)
 
 Unemp0810$TIME <- factor(Unemp0810$TIME) # Ensure year is treated as levels, not as continuous numbers
@@ -56,15 +56,15 @@ ggplot(data=Unemp0810, aes(x=cntry, y=Value, fill=TIME)) + geom_bar(stat="identi
 
 ```
 
-## Trends in Political Interest across countries 
+## Trends in Political Interest Across Countries ## 
 
-```{r}
+```{r, echo = F, warning = F, message = F}
 compare <- subset(YouthData, YouthData$cntry == "DE"|YouthData$cntry == "DK"|YouthData$cntry == "ES"|YouthData$cntry == "FR"|YouthData$cntry == "HU"|YouthData$cntry == "IE"|YouthData$cntry == "NL")
 
 ggplot(data = compare, aes(x=TIME, y=avgpolintr)) + geom_line(aes(colour=cntry)) + scale_x_continuous(name="Years", breaks = c(2002, 2004, 2006, 2008, 2010, 2012),labels=c("2002","2004","2006","2008","2010","2012"), limits = c(2002,2012))
 ```
 
-## Inferential Statistics I {.smaller .build}
+## Inferential Statistics I: Initial Attempt ## {.smaller .build}
 
 - Original intent was to regress the change in a given political variable on the change in unemployment
 
@@ -88,11 +88,13 @@ stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
 
 </div>
 
-## Inferential Statistics II
+## Inferential Statistics II: ESS Data Alone
 
-- Since we have access to a host of individual-level data in the ESS survey, including unemployment, decided to look here instead
+- Decided to look at individual-level ESS data instead for additional insight
 
-- Consider three political participation variables:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Survey asks people for their employment status
+
+- Within the paper, would like to look at at least three different measurements for political engagement 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Level of political interest
 
@@ -100,9 +102,9 @@ stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Voting
 
-```{r, echo=F}
-# should voting be a logit instead?? same with pbldmn
+- For this presentation, will focus on <b>political interest</b>
 
+```{r, echo=F}
 
 #Control Variables:
 # - eisced
@@ -114,7 +116,7 @@ stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
 
 ```
 
-## Inferential Statistics III: Political Interest ##  {.morereduced}
+## Inferential Statistics III: Political Interest ##  {.build .morereduced}
 ```{r, echo=F, results = 'asis'}
 ## Models for Unemployment ##
 
@@ -150,6 +152,8 @@ sjp.grpfrq(ESSData$eisced, ESSData$polintr, show.prc = F, show.n = F,
 
 ```
 
+
+
 ## Inferential Statistics III: Political Interest ##  {.reduced}
 
 <div class="columns-2">
@@ -167,54 +171,59 @@ stargazer(m3.1c, type = "html", digits = 2)
 </div>
 
 
-## Inferential Statistics III: Participation in Public Demonstrations ## 
+## Inferential Statistics III: Political Interest ##
 
+```{r, echo = F}
 
-```{r, echo=F, results = 'asis'}
+m3.1c <- lm(lm(polintr ~ unempdummy + gndr + factor(cntry) - 1, data = ESSData))
 
-# Public Demonstration
+m3.1cframe <- data.frame(Variable = rownames(summary(m3.1c)$coef), Coefficient = summary(m3.1c)$coef[,1], SE = summary(m3.1c)$coef[,2], modelName = "Country Model")
 
-m2.2 <- lm(pbldmn ~ unempdummy, data = ESSData)
+m3.1cframe <- m3.1cframe[-c(1,2),]
 
-stargazer::stargazer(m2.2, type = "html", font.size = "tiny")
+m3.1cframe$Variable <- c("BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GB","GR","HU","IE","IT","NL","NO","PL","PT","SE","SI","SK")
 
+# Specify the width of your confidence intervals
+interval1 <- -qnorm((1-0.9)/2)  # 90% multiplier
+interval2 <- -qnorm((1-0.95)/2)  # 95% multiplier
+
+# Plot
+
+zp1 <- ggplot(m3.1cframe)
+
+zp1 <- zp1 + geom_linerange(aes(x = Variable, ymin = Coefficient - SE*interval1,
+                                ymax = Coefficient + SE*interval1),
+                            lwd = 1, position = position_dodge(width = 1/2))
+zp1 <- zp1 + geom_pointrange(aes(x = Variable, y = Coefficient, ymin = Coefficient - SE*interval2,
+                                 ymax = Coefficient + SE*interval2),
+                             lwd = 1/2, position = position_dodge(width = 1/2),
+                             shape = 21, fill = "WHITE")
+zp1 <- zp1 + ggtitle("Comparing Various Country Coefficients") + 
+  theme(plot.title = element_text(size = 20, face = "bold", hjust = 0.5), 
+        axis.text.x = element_text(face = "bold"), 
+        axis.title.y = element_text(face = "bold")) + 
+  labs(x = "Countries") 
+print(zp1)  # The trick to these is position_dodge().
 
 ```
+Remember, a lower number (i.e., closer to 1) equates to a higher political interest. 
 
 
-## Avenues for further research
+## Where to from here? ## {.build}
 
-- How could this question be better answered?
-- What data would be needed?
+- <b>Want to introduce new types of models in the paper</b>
 
-## Shiny Presentation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Will likely need to make use of logit models when analyzing 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; voting and demonstration habits
 
-This R Markdown presentation is made interactive using Shiny. The viewers of the presentation can change the assumptions underlying what's presented and see the results immediately. 
+- <b>Integration of additional data</b>
 
-To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There is a 7th round of ESS data that we were unable to
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; successfully merge with our current dataset
 
-<div class="centered">
-This text is centered.
-</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Would like to continue to work on this to increase the range
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of data available to us
 
+## Thank you! ##
 
-<div class="red2">
-This text is red
-</div>
-
-## Slide with Interactive Plot
-
-
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Code and Output
-
-```{r}
-summary(cars)
-```
-
-
+Questions?

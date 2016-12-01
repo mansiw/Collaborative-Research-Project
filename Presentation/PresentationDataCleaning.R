@@ -5,7 +5,6 @@
 
 library(stargazer)  # for summary statistics and regression tables
 library(magrittr)  # for 'piping': more readable code
-library(ggplot)  # the ggplot2 package provides nice function for plotting
 library(ggplot2)  # the ggplot2 package provides nice function for plotting
 library(arm)  # for the sim() function to simulate model estimates
 library(interplot)  # for plotting interactions
