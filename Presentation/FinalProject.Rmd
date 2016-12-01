@@ -93,7 +93,7 @@ stargazer::stargazer(m1.2, covariate.labels = m1.1labels, type = "html")
 
 ```
 
-## Inferential Statistics III: Political Interest ##  {.smaller}
+## Inferential Statistics III: Political Interest ##  {.morereduced}
 ```{r, echo=F, results = 'asis'}
 ## Models for Unemployment ##
 
@@ -105,12 +105,29 @@ m3.1a <- lm(polintr ~ unempdummy, data = ESSData)
 
 m3.1b <- lm(polintr ~ unempdummy + gndr + factor(eisced) - 1, data = ESSData)
 
-m3.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA")
+m3.1c <- lm(polintr ~ unempdummy + gndr + factor(mbtru) - 1, data = ESSData)
 
-stargazer::stargazer(m3.1a, m3.1b, covariate.labels = m3.1blabels, type = "html")
+m3.1blabels <- c("Unemployment","Gender","Less than secondary","Lower secondary","L. Tier Upper Secondary","U. Tier Upper Secondary","Advanced Vocational","BA","MA","Curr. Memb. of Trade Union","Prev. Memb. of Trade Union","Not Memb. of Trade Union")
+
+stargazer::stargazer(m3.1a, m3.1b, m3.1c, covariate.labels = m3.1blabels, type = "html")
 
 
 ```  
+
+## Inferential Statistics III: Political Interest ##
+
+```{r, echo = F}
+
+library(sjPlot)
+
+sjp.setTheme(title.align = "center", title.size = 1.5)
+sjp.grpfrq(ESSData$eisced, ESSData$polintr, show.prc = F, show.n = F, 
+           axis.titles = c("Education Levels","Frequency"), 
+           axis.labels = c("Less than Secondary","Lower \nSecondary","Lower Tier Upper \nSecondary",
+                           "Upper Tier Upper \nSecondary","Advanced Vocational","BA","MA"),
+           title = c("Distribution of Political Interest by Educational Level"))
+
+```
 
 ## Inferential Statistics III: Political Interest ##  {.reduced}
 

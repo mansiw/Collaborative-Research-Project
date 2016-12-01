@@ -2,14 +2,17 @@
 
 ## Libraries ##
 
+
 library(stargazer)  # for summary statistics and regression tables
 library(magrittr)  # for 'piping': more readable code
+library(ggplot)  # the ggplot2 package provides nice function for plotting
 library(ggplot2)  # the ggplot2 package provides nice function for plotting
 library(arm)  # for the sim() function to simulate model estimates
 library(interplot)  # for plotting interactions
 library(dplyr)  # for data manipulation
 library(plm)
 library(foreign)
+library(sjPlot)
 
 ## Loading the Data ##
 
@@ -100,8 +103,8 @@ ESSData$eisced[ESSData$eisced >= 55] <- NA
 
 ## Make gndr a dummy ##
 
-ESSData$gndr[ESSData$gndr == 1] <- 0
-ESSData$gndr[ESSData$gndr == 2] <- 1
+ESSData$gndr[ESSData$gndr == 1] <- 0 # Male == 0
+ESSData$gndr[ESSData$gndr == 2] <- 1 # Female == 1
 
 table(ESSData$gndr)
 
@@ -121,7 +124,7 @@ library(countrycode)
 
 eu$cntry <- countrycode(eu$GEO, "country.name", "iso2c")
 
-## Creating Dummy Variable ##
+## Creating Dummy Variables ##
 
 # If uempla or uempli = 1, then code as 1, else 0
 
@@ -131,6 +134,18 @@ ESSData$unempdummy <- ifelse(ESSData$uempla ==1 | ESSData$uempli ==1, 1, 0)
 # if answer to either of the unemployment variables is 1, code as 1
 
 table(ESSData$unempdummy) # to verify only 0 or 1 in that variable
+
+ESSData$unempdummy <- as.numeric(ESSData$unempdummy)
+
+class(ESSData$unempdummy)
+
+# Create dummy for voting
+
+ESSData$votedummy <- 0
+
+ESSData$votedummy <- ifelse(ESSData$vote == 1, 1, 0)
+
+table(ESSData$votedummy) # to verify only 0 or 1 in that variable
 
 ## Group Data ##
 
@@ -199,3 +214,27 @@ summary(m6)
 #m7 <- plm(polintr ~ unempdummy, data = ESSData, model = "within", index = c("cntry", "TIME"))
 
 #summary(m7)
+
+m3.1c <- lm(lm(polintr ~ unempdummy + gndr + factor(cntry) - 1, data = ESSData))
+
+stargazer(list(m3.1c), header = F, float = F, single.row = T, type = "html")
+
+
+# logit model
+
+Logit1 <- glm(votedummy ~ unempdummy, data = ESSData, family = 'binomial')
+
+summary(Logit1)
+
+confint(Logit1)
+
+exp(cbind(OddsRatio = coef(Logit1), confint(Logit1)))
+
+
+fitted <- with(ESSData, data.frame(unempdummy = mean(unempdummy)))
+fitted
+
+fitted$predicted <- predict(Logit1, newdata = fitted, type = 'response')
+
+m3.1c <- lm(lm(polintr ~ unempdummy + gndr + factor(cntry) - 1, data = ESSData))
+
