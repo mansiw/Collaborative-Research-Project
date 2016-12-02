@@ -24,8 +24,6 @@ source("PresentationDataCleaning.R")
 
 ## Data Sources
 
-We used two main datasets for our research:
-
 <b>The European Social Survey</b>
 
 - Representative survey of EU residents conducted every two years (we used data from 2002 - 2012)
@@ -242,3 +240,9 @@ Remember, a lower number (i.e., closer to 1) equates to a higher political inter
 ## Thank you! ##
 
 Questions?
+
+## Data Sources ##
+
+ESS Data: http://www.europeansocialsurvey.org/downloadwizard/
+
+Eurostat Data: http://ec.europa.eu/eurostat/web/lfs/data/database ("Unemployment by sex and age - annual average")
